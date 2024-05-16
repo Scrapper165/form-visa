@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+model UserInfo {
+  id String   @id @default(uuid())
+  visa_to_country String?
+  name String?
+  name_alias String?
+  email String?
+  gender Gender?
+  dob DateTime?
+  pob String? @db.Text
+  marital_status String?
+  husband_wife_pob String?
+  is_has_kid Boolean?
+  //
+  country String?
+  nationality String?
+  other_nationality String?
+  address_on_paper String?
+  current_address String?
+  phone_number String?
+  //Thông tin hộ chiếu
+  id_issue_date DateTime?
+  id_expire_date DateTime?
+  id_country_receive String?
+  id_city_receive String?
+  id_lost_reason String?
+  //Thông tin công việc -> Thông tin công việc hiện tại
+  current_job String?
+  current_job_address String?
+  current_job_start_date DateTime?
+  current_company_phone_number String?
+  current_job_title String?
+  current_job_salary Int?
+  current_job_detail String? @db.Text
+  //Thông tin công việc -> Công Việc Trước Đây
+  old_job String?
+  old_job_title String?
+  old_job_start_date DateTime?
+  old_job_end_date DateTime?
+  //Trình độ học vấn 
+  education_level String?
+  school_name String?
+  major String?
+  school_start_date DateTime?
+  school_end_date DateTime?
+  //Thông tin gia đình
+  is_parent_live_in_visiting_country Boolean?
+  stay_status String?
+  is_relatives_living_in_visiting_country Boolean?
+  relatives_info_living_in_visiting_country String?  @db.Text
+  relationship_with_relatives String?
+  relatives_stay_status String?
+  //Thông tin du lịch
+  expected_start_date DateTime?
+  accompanying_person String?
+  traveled_countries String?   @db.Text
+  foreign_languages String?  @db.Text
+  trip_purpose String?  @db.Text
+  trip_payroll_person String?
+  //Loại visa đương đơn đã xin
+  visa_type_owned String?
+  // Đương đơn đã từng đến đất nước muốn xin visa lần nào chưa?
+  is_lived_in_visa_coutry Boolean?
+  is_lived_in_visa_coutry_date DateTime?
+  is_lived_in_visa_coutry_days_stay Int?
+  is_denied_visa Boolean?
+  denied_visa_reason String? @db.Text
+  denied_visa_number_of_time Int?
+  //Đương đơn đã có visa nước nào chưa sử dụng không ?
+  is_had_visa_country_not_used Boolean?
+  visa_country_not_used String?
+  //Đương đơn có mở hồ sơ bảo lãnh định cư tại nước nào không? Nếu có cho biết nước nào ? Theo Diện gì ?
+  guarantee_documents String? @db.Text
+  social_network  String?
+  is_belong_to_some_tribe_or_party Boolean?
+  party_join_date DateTime?
+  is_work_for_some_charity_organization Boolean?
+  is_weapons_trained Boolean?
+  is_worked_on_army Boolean?
+  is_has_some_sick Boolean?
+  is_had_been_arrested_by_crime Boolean?
+  is_renounce_citizenship Boolean?
+  //is done 
+  is_done_filling Boolean?
+
+}
+enum Gender {
+  Male
+  Female
+  Other
+}
+
+
+model ErrorLog {
+  id Int @id @default(autoincrement())
+  message  String @db.Text
+  created_at DateTime @default(now())
+}
