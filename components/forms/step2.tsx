@@ -2,6 +2,7 @@
 import { saveData } from "@/actions";
 import { Input } from "@/components/ui/input";
 import { countryList } from "@/constants";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserInfo } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";
@@ -47,6 +48,21 @@ export const Step2Form = ({ data }: { data: UserInfo }) => {
       id_lost_reason: data?.id_lost_reason ?? "",
     },
   });
+
+  const watchedValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("step2FormData", JSON.stringify(watchedValues));
+  }, [watchedValues]);
+
+  // Để hiển thị dữ liệu từ localStorage ra form
+  useEffect(() => {
+    const storedData = localStorage.getItem("step2FormData");
+    if (storedData) {
+      reset(JSON.parse(storedData));
+    }
+  }, [reset]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { is_id_had_been_lost, ...rest } = values;
     const rs = await saveData({ ...rest, id: data.id });

@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { countryList } from "@/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserInfo } from "@prisma/client";
+import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -68,6 +69,22 @@ export const Step3Form = ({ data }: { data: UserInfo }) => {
       current_job_title: data.current_job_title ?? "",
     },
   });
+
+  
+  const watchedValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("step3FormData", JSON.stringify(watchedValues));
+  }, [watchedValues]);
+
+  // Để hiển thị dữ liệu từ localStorage ra form
+  useEffect(() => {
+    const storedData = localStorage.getItem("step3FormData");
+    if (storedData) {
+      reset(JSON.parse(storedData));
+    }
+  }, [reset]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // const rs = await saveData({
     //   data,

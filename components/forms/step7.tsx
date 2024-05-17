@@ -4,6 +4,7 @@ import { countryList } from "@/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserInfo } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -87,6 +88,22 @@ export const Step7Form = ({ data }: { data: UserInfo }) => {
       visa_type_owned: data.visa_type_owned ?? "",
     },
   });
+
+  
+  const watchedValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("step7FormData", JSON.stringify(watchedValues));
+  }, [watchedValues]);
+
+  // Để hiển thị dữ liệu từ localStorage ra form
+  useEffect(() => {
+    const storedData = localStorage.getItem("step7FormData");
+    if (storedData) {
+      reset(JSON.parse(storedData));
+    }
+  }, [reset]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const rs = await saveData({
       ...values,

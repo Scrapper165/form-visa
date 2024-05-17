@@ -1,6 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { countryList } from "@/constants";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Gender, UserInfo } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";
@@ -87,6 +88,21 @@ export const Step1Form = ({ data }: { data?: UserInfo }) => {
       other_nationality: data?.other_nationality ?? undefined,
     },
   });
+
+  const watchedValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("step1FormData", JSON.stringify(watchedValues));
+  }, [watchedValues]);
+
+  // Để hiển thị dữ liệu từ localStorage ra form
+  useEffect(() => {
+    const storedData = localStorage.getItem("step1FormData");
+    if (storedData) {
+      reset(JSON.parse(storedData));
+    }
+  }, [reset]);
+
   const onSubmit = async (value: z.infer<typeof formSchema>) => {
     const { is_has_other_nationality, ...rest } = value;
     const rs = await saveData({
@@ -110,7 +126,20 @@ export const Step1Form = ({ data }: { data?: UserInfo }) => {
     >
       <div className="grid  gap-4">
         <FormItem label="Họ và tên theo hộ chiếu">
-          <Input {...register("name")} />
+        <Input
+            {...register("name")}
+            onChange={(e) => {
+              setValue("name", e.target.value); // Cập nhật trạng thái biểu mẫu
+              // Cập nhật localStorage
+              localStorage.setItem(
+                "step1FormData",
+                JSON.stringify({
+                  ...watchedValues,
+                  name: e.target.value,
+                })
+              );
+            }}
+          />
           {errors.name && (
             <p className="text-rose-500 text-sm mt-2">{errors.name.message}</p>
           )}
@@ -119,7 +148,17 @@ export const Step1Form = ({ data }: { data?: UserInfo }) => {
           <RadioGroup
             defaultValue={data?.gender ?? "Male"}
             className="flex gap-6"
-            onValueChange={(value: Gender) => setValue("gender", value)}
+            onValueChange={(value: Gender) => {
+              setValue("gender", value); // Update form state
+              // Update localStorage
+              localStorage.setItem(
+                "step1FormData",
+                JSON.stringify({
+                  ...watchedValues,
+                  gender: value,
+                })
+              );
+            }}
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="Male" id="r1" />

@@ -3,6 +3,7 @@ import { saveData } from "@/actions";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserInfo } from "@prisma/client";
+import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -45,6 +46,22 @@ export const Step5Form = ({ data }: { data: UserInfo }) => {
       school_start_date: data.school_start_date ?? new Date(),
     },
   });
+
+  
+  const watchedValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("step5FormData", JSON.stringify(watchedValues));
+  }, [watchedValues]);
+
+  // Để hiển thị dữ liệu từ localStorage ra form
+  useEffect(() => {
+    const storedData = localStorage.getItem("step5FormData");
+    if (storedData) {
+      reset(JSON.parse(storedData));
+    }
+  }, [reset]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const rs = await saveData({
       ...values,

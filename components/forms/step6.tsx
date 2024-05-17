@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { countryList } from "@/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserInfo } from "@prisma/client";
+import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -57,6 +58,22 @@ export const Step6Form = ({ data }: { data: UserInfo }) => {
       stay_status: data.stay_status ?? "",
     },
   });
+
+  
+  const watchedValues = watch();
+
+  useEffect(() => {
+    localStorage.setItem("step6FormData", JSON.stringify(watchedValues));
+  }, [watchedValues]);
+
+  // Để hiển thị dữ liệu từ localStorage ra form
+  useEffect(() => {
+    const storedData = localStorage.getItem("step6FormData");
+    if (storedData) {
+      reset(JSON.parse(storedData));
+    }
+  }, [reset]);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const { ...rest } = values;
     const rs = await saveData({
